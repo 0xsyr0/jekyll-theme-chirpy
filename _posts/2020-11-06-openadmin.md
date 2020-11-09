@@ -130,8 +130,6 @@ $ id
 uid=33(www-data) gid=33(www-data) groups=33(www-data)
 ```
 
-!!! UNDER CONSTRUCTION !!!
-
 
 # Resources
 
