@@ -66,7 +66,9 @@
 
   {% for entry in site.data.contact %}
     {% capture url %}
-      {%- if entry.type == 'github' -%}
+      {%- if entry.type == 'hackthebox' -%}
+        https://hackthebox.eu/{{ site.hackthebox.username }}
+      {%- elsif entry.type == 'github' -%}
         https://github.com/{{ site.github.username }}
       {%- elsif entry.type == 'twitter' -%}
         https://twitter.com/{{ site.twitter.username }}

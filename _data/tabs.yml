@@ -24,7 +24,7 @@
   url: archives
   icon: "fas fa-archive"
 -
-  name: "About"
+  name: "Whoami"
   icon: "fas fa-info"
   path: tabs
-  url: about
+  url: whoami
