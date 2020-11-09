@@ -1,10 +1,9 @@
 ---
 title: OpenAdmin Writeup
-date: 2020-11-06 00:38:56 -0100
+date: 2020-11-06 00:38:56
 categories: [HTB, retired]
 published: true
 tags: [writeup]
-
 ---
 
 [![Banner](https://raw.githubusercontent.com/0xsyr0/0xsyr0.github.io/master/assets/img/htb/openadmin/openadmin_info_card.jpg)](https://www.hackthebox.eu/home/machines/profile/222)
