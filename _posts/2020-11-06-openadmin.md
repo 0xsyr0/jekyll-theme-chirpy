@@ -1,7 +1,7 @@
 ---
 title: OpenAdmin Writeup
 date: 2020-11-06 00:38:56
-categories: [HTB, retired]
+categories: [htb, retired]
 published: true
 tags: [writeup]
 ---
