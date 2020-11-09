@@ -5,8 +5,12 @@
 #  MIT Licensed
 
 -
+  type: hackthebox
+  icon: 'fas fa-cube'
+#  url: 'https://www.hackthebox.eu/home/users/profile/156456'
+-
   type: github
-  icon: 'fab fa-github-alt'
+  icon: 'fab fa-github'
 -
   type: twitter
   icon: 'fab fa-twitter'
@@ -14,9 +18,9 @@
   type: email
   icon: 'fas fa-envelope'
   noblank: true            # open link in current tab
--
-  type: rss
-  icon: 'fas fa-rss'
+#-
+#  type: rss
+#  icon: 'fas fa-rss'
   noblank: true
 
 # Uncomment and complete the url below to enable more contact options
