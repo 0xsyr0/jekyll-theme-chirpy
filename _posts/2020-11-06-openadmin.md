@@ -77,7 +77,7 @@ by OJ Reeves (@TheColonial) & Christian Mehlmauer (@_FireFart_)
 /artwork (Status: 301)
 ```
 
-## Footholding
+# Footholding
 
 Let's check the found directories and start with `/music`.
 
@@ -209,7 +209,7 @@ www-data@openadmin:/opt/ona/www$ ls
 
 Please notice that this only works with bash. If you are using zsh you may ran into some issues.
 
-## Enumeration
+# Enumeration
 
 At first we start with some basic manually enumeration on the `/var/www/` directory to see what
 we get.
@@ -535,5 +535,5 @@ THE END
 
 # Resources
 
-<https://www.exploit-db.com/exploits/47691>
-<https://gtfobins.github.io/>
+> <https://www.exploit-db.com/exploits/47691>
+> <https://gtfobins.github.io/>
