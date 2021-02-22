@@ -530,7 +530,7 @@ User joanna may run the following commands on openadmin:
 Well that's the case. The user joanna is able to execute the nano binary with root privileges in `/opt/priv` which means
 that we can create a file in there.
 
-Let's have a look at **gtfobins** if we can find some useful information to execute a root shell.
+Let's have a look at **GTFObins** if we can find some useful information to execute a root shell.
 
 > https://gtfobins.github.io/gtfobins/nano/
 
