@@ -540,5 +540,7 @@ THE END
 
 # Resources
 
-> <https://www.exploit-db.com/exploits/47691>
-> <https://gtfobins.github.io/>
+| Topic                                           | URL              |
+|:------------------------------------------------|:-----------------|
+| OpenNetAdmin 18.1.1 - Remote Code Execution     | [click here](https://www.exploit-db.com/exploits/4769) |
+| GTFOBins - nano                                 | [click here](https://gtfobins.github.io/gtfobins/nano/) |
