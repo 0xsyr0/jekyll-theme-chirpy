@@ -10,24 +10,55 @@ tags: [writeup]
 
 # Information@openadmin:~$
 
-| Column                       | Detail           |
-|:-----------------------------|:-----------------|
-| Name                         | OpenAdmin        |
-| IP                           | 10.10.10.171     |
-| Points                       | 20               |
-| OS                           | Linux            |
-| Difficulty                   | Easy             |
+| Column                       | Detail                                                       |
+|:-----------------------------|:-------------------------------------------------------------|
+| Name                         | OpenAdmin                                                    |
+| IP                           | 10.10.10.171                                                 |
+| Points                       | 20                                                           |
+| OS                           | Linux                                                        |
+| Difficulty                   | Easy                                                         |
 | Creator                      | [dmw0ng](https://www.hackthebox.eu/home/users/profile/82600) |
-| Released on                  | 4 Jan 2020       |
-| Retired on                   | 2 May 2020       |
+| Released on                  | 4 Jan 2020                                                   |
+| Retired on                   | 2 May 2020                                                   |
 
 # Brief@openadmin:~$
 
-Lorem ipsum dolor sit amet consectetur adipiscing elit sem lacinia ultricies senectus, sapien hendrerit montes hac non bibendum nec mi suscipit accumsan. Himenaeos semper dignissim dictum netus feugiat magna dictumst, blandit non pellentesque hac lacus tristique, dui egestas conubia parturient morbi dis. Dis lacinia auctor neque metus ad nisi felis vitae hac torquent, tempor et vestibulum molestie dapibus natoque sed suspendisse ullamcorper parturient, tristique proin elementum tortor pretium nullam magnis in cras.
+The box starts off with only port `TCP/22` and `TCP/80` open. After running gobuster against port 80, it revealed a **/music**
+subdirectory which provided information about the software **OpenNetAdmin 18.1.1** running on it.
 
-Nulla aptent sociosqu vivamus pellentesque donec senectus venenatis, elementum mollis nam augue vulputate vel, himenaeos mus erat dui blandit mi. Parturient rhoncus at tincidunt conubia taciti feugiat metus auctor, curae integer congue elementum mi nulla mattis, facilisi placerat magnis suscipit tristique lectus dapibus. Cubilia potenti platea viverra pulvinar malesuada sagittis sodales mauris quis, sociis parturient a penatibus odio duis molestie venenatis hendrerit praesent, fames vel cras vitae nam turpis montes quisque.
+By using an remote code execution exploit from exploit-db, it was possible to get a shell on the box.
+
+During some basic enumeration of the **/var/www** directory, the credentials for the privilege escalation to **jimmy** were found
+in the file called **database_settings.inc.php**. With jimmy it was possible to access the internal directory.
+
+Within the directory a file called **main.php** revealed the information that the **ssh private key** for **joanna** can be optained by
+accessing the **main.php** on the interal listening webserver.
+
+After generating a crackable **hash** out of the private key by using **ssh2john**, the password for the key could be cracked by
+using **john** and the user flag could be taken.
+
+Due some basic privilege testing the information showed up that joanna was able to execute **nano** with root privileges.
+The last step was to find the command sequence on **GTFObins** and the box was owned.
 
 # Summary
+
+- Start off with nmap as always
+- Gobuster reveals the **/music** directory
+- Get information about the software **OpenNetAdmin**
+- Get the **exploit** for the remote code execution from **exploit-db**
+- After getting a **reverse shell**, upgrade the shell
+- Start with enumerating **/var/www/**
+- Find credentials in the **database_settings.inc.php** file
+- Reuse the password for the user jimmy
+- Enumerate the **internal** direcotry and find the **main.php** file
+- Throw a **curl** request against the local listener to trigger the **main.php** file
+- Optain the **ssh private key** for joanna
+- Create a crackable hash using **ssh2john**
+- Crack the password with **john**
+- Login as joanna and take the **user.txt**
+- Check the privileges of joanna and figure out that the user can start **nano** with **sudo**
+- Get the command sequence for **nano** from **GTFObins**
+- Execute it to pop a **root shell** and to optain the **root.txt**
 
 # Reconnaissance
 
@@ -540,7 +571,7 @@ THE END
 
 # Resources
 
-| Topic                                           | URL              |
-|:------------------------------------------------|:-----------------|
-| OpenNetAdmin 18.1.1 - Remote Code Execution     | [click here](https://www.exploit-db.com/exploits/4769) |
+| Topic                                           | URL                                                     |
+|:------------------------------------------------|:--------------------------------------------------------|
+| OpenNetAdmin 18.1.1 - Remote Code Execution     | [click here](https://www.exploit-db.com/exploits/4769)  |
 | GTFOBins - nano                                 | [click here](https://gtfobins.github.io/gtfobins/nano/) |
