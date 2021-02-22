@@ -305,6 +305,8 @@ User: jimmy
 User: joanna
 ```
 
+# Privilege Escalation to jimmy
+
 Now we check out what we find inside the ona directory we can access and have a
 closer look to the `database_settings.inc.php` file.
 
@@ -336,8 +338,6 @@ $ona_contexts=array (
 
 ?>
 ```
-
-# Privilege Escalation to jimmy
 
 And we are lucky to get credentials for the mysql database.
 
