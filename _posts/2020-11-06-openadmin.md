@@ -23,22 +23,22 @@ tags: [writeup]
 
 # Brief@openadmin:~$
 
-The box starts off with only port `TCP/22` and `TCP/80` open. After running gobuster against port 80, it revealed a **/music**
-subdirectory which provided information about the software **OpenNetAdmin 18.1.1** running on it.
+The box starts off with only port `TCP/22` and `TCP/80` open. After running gobuster against port 80, it revealed a `/music`
+subdirectory which provided information about the software `OpenNetAdmin 18.1.1` running on it.
 
 By using an remote code execution exploit from exploit-db, it was possible to get a shell on the box.
 
-During some basic enumeration of the **/var/www** directory, the credentials for the privilege escalation to **jimmy** were found
-in the file called **database_settings.inc.php**. With jimmy it was possible to access the internal directory.
+During some basic enumeration of the `/var/www` directory, the credentials for the privilege escalation to `jimmy` were found
+in the file called `database_settings.inc.php`. With jimmy it was possible to access the `internal` directory.
 
-Within the directory a file called **main.php** revealed the information that the **ssh private key** for **joanna** can be optained by
-accessing the **main.php** on the interal listening webserver.
+Within the directory a file called `main.php` revealed the information that the `ssh private key` for `joanna` can be optained by
+accessing the `main.php` on the interal listening webserver.
 
-After generating a crackable **hash** out of the private key by using **ssh2john**, the password for the key could be cracked by
-using **john** and the user flag could be taken.
+After generating a crackable `hash` out of the private key by using `ssh2john`, the password for the key could be cracked by
+using `john` and the user flag could be taken.
 
-Due some basic privilege testing the information showed up that joanna was able to execute **nano** with root privileges.
-The last step was to find the command sequence on **GTFObins** and the box was owned.
+Due some basic privilege testing the information showed up that joanna was able to execute `nano` with `root` privileges.
+The last step was to find the command sequence on `GTFObins` and the box was owned.
 
 # Summary
 
